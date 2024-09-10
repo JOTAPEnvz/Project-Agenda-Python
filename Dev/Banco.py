@@ -17,6 +17,23 @@ class Banco:
                 senha TEXT
             )
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS cidades (
+                idCidade INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT,
+                estado TEXT
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS clientes (
+                idCliente INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT,
+                telefone TEXT,
+                email TEXT,
+                idCidade INTEGER,
+                FOREIGN KEY (idCidade) REFERENCES cidades (idCidade)
+            )
+        ''')
         self.conexao.commit()
 
     def fechar_conexao(self):

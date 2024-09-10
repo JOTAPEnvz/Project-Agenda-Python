@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk  # Importar ttk para o Treeview
 from usuarios_model import Usuario
 
 class Application:
@@ -73,6 +74,39 @@ class Application:
         self.lblMensagem = tk.Label(root, text="", fg="green")
         self.lblMensagem.grid(row=2, column=1, padx=20, pady=10, sticky="we")
 
+        # Adicionar o Treeview abaixo dos botões
+        self.treeview = ttk.Treeview(root, columns=("id", "nome", "telefone", "email", "usuario"), show="headings")
+        self.treeview.grid(row=3, column=1, padx=20, pady=10, sticky="nsew")
+
+        # Definir cabeçalhos
+        self.treeview.heading("id", text="ID")
+        self.treeview.heading("nome", text="Nome")
+        self.treeview.heading("telefone", text="Telefone")
+        self.treeview.heading("email", text="Email")
+        self.treeview.heading("usuario", text="Usuário")
+
+        # Ajustar tamanho das colunas
+        self.treeview.column("id", width=50, anchor="center")
+        self.treeview.column("nome", width=150, anchor="w")
+        self.treeview.column("telefone", width=100, anchor="center")
+        self.treeview.column("email", width=200, anchor="w")
+        self.treeview.column("usuario", width=100, anchor="center")
+
+        # Carregar os dados na inicialização
+        self.carregar_usuarios()
+
+    def carregar_usuarios(self):
+        # Limpar dados anteriores
+        for item in self.treeview.get_children():
+            self.treeview.delete(item)
+
+        # Obter todos os usuários
+        usuarios = self.usuario.buscar_todos()
+
+        # Inserir novos dados no Treeview
+        for usuario in usuarios:
+            self.treeview.insert("", "end", values=usuario)
+
     def buscar_usuario(self):
         idUsuario = self.txtIdUsuario.get()
         resultado = self.usuario.buscar(idUsuario)
@@ -100,6 +134,7 @@ class Application:
         self.usuario.inserir(nome, telefone, email, usuario, senha)
         self.lblMensagem.config(text="Usuário inserido com sucesso!", fg="green")
         self.limpar_campos()
+        self.carregar_usuarios()  # Recarregar dados
 
     def alterar_usuario(self):
         idUsuario = self.txtIdUsuario.get()
@@ -110,12 +145,14 @@ class Application:
         senha = self.txtSenha.get()
         self.usuario.alterar(idUsuario, nome, telefone, email, usuario, senha)
         self.lblMensagem.config(text="Usuário alterado com sucesso!", fg="green")
+        self.carregar_usuarios()  # Recarregar dados
 
     def excluir_usuario(self):
         idUsuario = self.txtIdUsuario.get()
         self.usuario.excluir(idUsuario)
         self.lblMensagem.config(text="Usuário excluído com sucesso!", fg="green")
         self.limpar_campos()
+        self.carregar_usuarios()  # Recarregar dados
 
     def limpar_campos(self):
         self.txtIdUsuario.delete(0, tk.END)
